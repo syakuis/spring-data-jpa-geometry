@@ -12,6 +12,7 @@ buildscript {
         mapStructVersion = '1.5.2.Final'
         mapStructExtensionsVersion = '0.1.1'
         lombokMapStructVersion = '0.2.0'
+        hibernateVersion = '5.6.11.Final'
         querydslVersion = '5.0.0'
         // 2 버전은 호환성 이슈가 있어 업그레이드 하지 않음.
         h2Version = "1.4.200"
@@ -127,6 +128,7 @@ dependencies {
 
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:${jacksonVersion}"
+    implementation "org.hibernate:hibernate-spatial:${hibernateVersion}"
     implementation "com.querydsl:querydsl-core:${querydslVersion}"
     implementation "com.querydsl:querydsl-jpa:${querydslVersion}"
     annotationProcessor(
