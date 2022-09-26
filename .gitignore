@@ -1,0 +1,15 @@
+application-default.yml
+application-default.properties
+build.yml
+src/main/resources/static/api-docs
+
+*~
+.DS_Store
+
+build/
+.idea
+.gradle
+*.iml
+*.hprof
+*.log
+*.bak

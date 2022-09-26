@@ -1,0 +1,198 @@
+// https://docs.spring.io/spring-boot/docs/2.7.3/reference/html/dependency-versions.html#dependency-versions
+// https://docs.spring.io/spring-boot/docs/2.7.3/reference/htmlsingle
+// https://docs.spring.io/spring-cloud/docs/2021.0.3/reference/html/
+buildscript {
+    ext {
+        groupId = "io.github.syaku"
+        versionName = "1.0.0-SNAPSHOT"
+        springBootVersion = "2.7.3"
+        springCloudVersion = "2021.0.3"
+        lombokVersion = '1.18.24'
+        jacksonVersion = '2.13.3'
+        mapStructVersion = '1.5.2.Final'
+        mapStructExtensionsVersion = '0.1.1'
+        lombokMapStructVersion = '0.2.0'
+        querydslVersion = '5.0.0'
+        // 2 버전은 호환성 이슈가 있어 업그레이드 하지 않음.
+        h2Version = "1.4.200"
+
+        restDocsVersion = '2.0.6.RELEASE'
+        snippetsDir = file('build/generated-snippets')
+    }
+
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7.1"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE"
+        classpath "org.asciidoctor:asciidoctor-gradle-jvm:3.3.2"
+    }
+}
+
+wrapper {
+    gradleVersion = "7.5.1"
+}
+
+apply plugin: "java"
+apply plugin: "application"
+apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
+apply plugin: "org.asciidoctor.jvm.convert"
+apply plugin: "org.sonarqube"
+apply plugin: "jacoco"
+
+ext.publisherUsername = project.hasProperty("publisher.username") ? project.findProperty("publisher.username") : ''
+ext.publisherPassword = project.hasProperty("publisher.password") ? project.findProperty("publisher.password") : ''
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/syakuis/spring-gradle-template")
+        credentials {
+            username publisherUsername
+            password publisherPassword
+        }
+    }
+}
+
+group groupId
+version versionName
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+compileJava.options.encoding = 'UTF-8'
+
+configurations {
+    implementation.exclude module: "spring-boot-starter-tomcat"
+    querydsl.extendsFrom compileClasspath
+    asciidoctorExt
+}
+
+//스냅샷 패키지 내려 받기 않을때 캐시 조절
+//configurations.all {
+//    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+//    resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+//}
+
+processResources {
+    filesMatching('*.yml') {
+        expand(project.properties)
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'commons-io:commons-io:2.11.0'
+
+    implementation "org.mapstruct:mapstruct:${mapStructVersion}"
+    implementation "org.mapstruct.extensions.spring:mapstruct-spring-annotations:${mapStructExtensionsVersion}"
+
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapStructVersion}"
+    annotationProcessor "org.mapstruct.extensions.spring:mapstruct-spring-annotations:${mapStructExtensionsVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapStructVersion}"
+
+    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapStructVersion}"
+    testAnnotationProcessor "org.mapstruct.extensions.spring:mapstruct-spring-annotations:${mapStructExtensionsVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapStructVersion}"
+
+    asciidoctorExt "org.springframework.restdocs:spring-restdocs-asciidoctor:${restDocsVersion}"
+    testImplementation "org.springframework.restdocs:spring-restdocs-mockmvc:${restDocsVersion}"
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+
+    implementation "org.springframework.boot:spring-boot-starter-undertow"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    // or implementation "org.springframework.boot:spring-boot-starter"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:${jacksonVersion}"
+    implementation "com.querydsl:querydsl-core:${querydslVersion}"
+    implementation "com.querydsl:querydsl-jpa:${querydslVersion}"
+    annotationProcessor(
+        "jakarta.persistence:jakarta.persistence-api",
+        "jakarta.annotation:jakarta.annotation-api",
+        "com.querydsl:querydsl-apt:${querydslVersion}:jpa"
+    )
+
+    testImplementation "com.h2database:h2:${h2Version}"
+    compileOnly "com.h2database:h2:${h2Version}"
+
+    testImplementation "org.springframework.cloud:spring-cloud-starter-contract-stub-runner"
+}
+
+sonarqube {
+    properties {
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.organization", "syakuis-github"
+        property "sonar.projectKey", "syakuis-github"
+        property "sonar.projectName", "spring-gradle-template"
+        property "sonar.language", "java"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.sources", "src/main/java"
+        property "sonar.exclusions", "**/*Test*.*, **/Q*.java"
+        property "sonar.test.inclusions", "**/*Test.java"
+        property "sonar.coverage.exclusions", "**/*Test*.*, **/Q*.java"
+        property "sonar.java.junit.reportPaths", "${buildDir}/test-results"
+        property "sonar.jacoco.reportPaths", "${buildDir}/jacoco/jacoco.exec"
+    }
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    dependsOn test
+}
+
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/api-docs')
+}
+
+task copyDocument(type: Copy) {
+    dependsOn asciidoctor
+
+    from file("${asciidoctor.outputDir}")
+    into file("src/main/resources/static/api-docs")
+}
+
+test {
+    outputs.dir snippetsDir
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+    systemProperty 'spring.profiles.active', 'test'
+}
+
+application {
+    mainClass = 'io.github.syakuis.Application'
+}
+
+bootJar {
+    enabled true
+    launchScript()
+}
+
+jar {
+    enabled false
+}

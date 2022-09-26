@@ -1,0 +1,11 @@
+logging:
+  file:
+    name: default.log
+    path:
+  logback:
+    rollingpolicy:
+      #      file-name-pattern:
+      clean-history-on-start: false
+      max-file-size: 10MB
+      total-size-cap: 20GB
+      max-history: 30

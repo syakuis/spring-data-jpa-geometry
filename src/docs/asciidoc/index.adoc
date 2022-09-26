@@ -1,0 +1,25 @@
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+= 제목
+Doc Writer <syaku@naver.com>
+
+****
+WARNING: 경고문
+****
+
+== 소개
+
+== 서비스 환경
+
+== 전문
+
+**Request**
+include::{snippets}/전문경로/http-request.adoc[]
