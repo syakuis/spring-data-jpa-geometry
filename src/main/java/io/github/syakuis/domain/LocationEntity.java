@@ -1,9 +1,6 @@
 package io.github.syakuis.domain;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.geo.Point;
 
 import javax.persistence.*;
@@ -22,6 +19,11 @@ public class LocationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "geometry")
+    @Column(nullable = false)
     private Point point;
+
+    @Builder
+    public LocationEntity(Point point) {
+        this.point = point;
+    }
 }
