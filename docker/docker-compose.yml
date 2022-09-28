@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  mariadb:
+    platform: linux/amd64
+    image: mariadb:10.4
+    ports:
+      - "3306:3306"
+    environment:
+      TZ: Asia/Seoul
+      MYSQL_ROOT_PASSWORD: root
+    command:
+      - --character-set-server=utf8
+      - --collation-server=utf8_unicode_ci
+    volumes:
+      - "./init-docker.sql:/docker-entrypoint-initdb.d/init-docker.sql"

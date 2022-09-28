@@ -7,4 +7,5 @@ import org.springframework.data.repository.CrudRepository;
  * @since 2022-09-27
  */
 public interface LocationRepository extends CrudRepository<LocationEntity, Long> {
+
 }

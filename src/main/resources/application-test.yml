@@ -1,4 +1,7 @@
 spring:
+  test:
+    database:
+      replace: none
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop

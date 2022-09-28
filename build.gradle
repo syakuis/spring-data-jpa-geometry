@@ -5,7 +5,7 @@ buildscript {
         springBootVersion = "2.7.4"
         springCloudVersion = "2021.0.4"
         lombokVersion = '1.18.24'
-        jacksonVersion = '2.13.3'
+        jacksonVersion = '2.13.4'
         mapStructVersion = '1.5.2.Final'
         mapStructExtensionsVersion = '0.1.1'
         lombokMapStructVersion = '0.2.0'
@@ -132,6 +132,8 @@ dependencies {
         "jakarta.annotation:jakarta.annotation-api",
         "com.querydsl:querydsl-apt:${querydslVersion}:jpa"
     )
+
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.6'
 
     testImplementation "com.h2database:h2:${h2Version}"
     compileOnly "com.h2database:h2:${h2Version}"
