@@ -12,6 +12,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -51,22 +52,65 @@ class LocationRepositoryTest {
         double south = southWest.getLatitude();
         double west = southWest.getLongitude();
 
+        log.debug("{} {} {} {}", north, east, south, west);
+
         List<LocationEntity> location = locationRepository.findAllByPoint(
             BigDecimal.valueOf(north), BigDecimal.valueOf(east), BigDecimal.valueOf(south), BigDecimal.valueOf(west));
         assertTrue(location.stream().map(LocationEntity::getName).toList().contains("롯데타워"));
     }
 
     @Test
-    void rectangle() {
-        // 북동
-        double north = 37.526984;
-        double east = 126.927212;
-        // 남서
-        double south = 37.526181;
-        double west = 126.927087;
+    void around_is_empty() {
+        // 롯데타워 에서
+        final Double meLatitude = 37.512603;
+        final Double meLongitude = 127.102228;
+        final Double distance = 2.0D;
+
+        Coordinate northEast = GeometryUtils.calculate(meLatitude, meLongitude, distance, Direction.NORTHEAST.getBearing());
+        Coordinate southWest = GeometryUtils.calculate(meLatitude, meLongitude, distance, Direction.SOUTHWEST.getBearing());
+
+        double north = northEast.getLatitude();
+        double east = northEast.getLongitude();
+        double south = southWest.getLatitude();
+        double west = southWest.getLongitude();
 
         List<LocationEntity> location = locationRepository.findAllByPoint(
             BigDecimal.valueOf(north), BigDecimal.valueOf(east), BigDecimal.valueOf(south), BigDecimal.valueOf(west));
+
+        log.debug("{}", location);
+        assertFalse(location.stream().map(LocationEntity::getName).toList().contains("올림픽공원역 1번출구 앞 따릉이 대여소"));
+        assertFalse(location.stream().map(LocationEntity::getName).toList().contains("올림픽대교남단"));
+    }
+
+    @Test
+    void rectangle() {
+        // 북동
+        double northX = 37.526962;
+        double eastY = 126.927653;
+        // 남서
+        double southX = 37.526249;
+        double westY = 126.926742;
+
+        List<LocationEntity> location = locationRepository.findAllByPoint(
+            BigDecimal.valueOf(northX), BigDecimal.valueOf(eastY), BigDecimal.valueOf(southX), BigDecimal.valueOf(westY));
         assertTrue(location.stream().map(LocationEntity::getName).toList().contains("파크원"));
+        assertTrue(location.stream().map(LocationEntity::getName).toList().contains("뱅크샐러드"));
+    }
+
+    @Test
+    void rectangle_is_empty() {
+        // 북동
+        double northX = 37.526962;
+        double eastY = 126.927653;
+        // 남서
+        double southX = 37.526249;
+        double westY = 126.926742;
+
+        List<LocationEntity> location = locationRepository.findAllByPoint(
+            BigDecimal.valueOf(northX), BigDecimal.valueOf(eastY), BigDecimal.valueOf(southX), BigDecimal.valueOf(westY));
+
+        log.debug("{}", location);
+
+        assertFalse(location.stream().map(LocationEntity::getName).toList().contains("NH투자증권 본사"));
     }
 }
