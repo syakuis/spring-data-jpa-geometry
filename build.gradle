@@ -12,7 +12,7 @@ buildscript {
         hibernateVersion = '5.6.11.Final'
         querydslVersion = '5.0.0'
         // 2 버전은 호환성 이슈가 있어 업그레이드 하지 않음.
-        h2Version = "1.4.200"
+        h2Version = "1.4.197"
 
         restDocsVersion = '2.0.6.RELEASE'
         snippetsDir = file('build/generated-snippets')
@@ -137,6 +137,8 @@ dependencies {
 
     testImplementation "com.h2database:h2:${h2Version}"
     compileOnly "com.h2database:h2:${h2Version}"
+    testImplementation "org.orbisgis:h2gis:1.5.0"
+    testImplementation "org.orbisgis:h2gis-functions:1.3.2"
 
     testImplementation "org.springframework.cloud:spring-cloud-starter-contract-stub-runner"
 }

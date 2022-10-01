@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @Slf4j
 @DataJpaTest
-@Sql("classpath:/location.sql")
+@Sql("classpath:/location-h2.sql")
 class LocationRepositoryTest {
     @Autowired
     private LocationRepository locationRepository;
@@ -51,7 +51,7 @@ class LocationRepositoryTest {
         double south = southWest.getLatitude();
         double west = southWest.getLongitude();
 
-        List<LocationEntity> location = locationRepository.findAllByPoint(
+        List<LocationEntity> location = locationRepository.findAllByPointh2(
             BigDecimal.valueOf(north), BigDecimal.valueOf(east), BigDecimal.valueOf(south), BigDecimal.valueOf(west));
         assertTrue(location.stream().map(LocationEntity::getName).toList().contains("롯데타워"));
     }
@@ -65,7 +65,7 @@ class LocationRepositoryTest {
         double south = 37.526181;
         double west = 126.927087;
 
-        List<LocationEntity> location = locationRepository.findAllByPoint(
+        List<LocationEntity> location = locationRepository.findAllByPointh2(
             BigDecimal.valueOf(north), BigDecimal.valueOf(east), BigDecimal.valueOf(south), BigDecimal.valueOf(west));
         assertTrue(location.stream().map(LocationEntity::getName).toList().contains("파크원"));
     }

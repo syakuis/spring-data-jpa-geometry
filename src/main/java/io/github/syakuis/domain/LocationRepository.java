@@ -18,4 +18,10 @@ public interface LocationRepository extends CrudRepository<LocationEntity, Long>
         WHERE MBRContains(ST_LINESTRINGFROMTEXT(CONCAT('LINESTRING(', :north, ' ', :east, ',', :south, ' ', :west, ')')), point)
     """)
     List<LocationEntity> findAllByPoint(@Param("north") BigDecimal north, @Param("east") BigDecimal east, @Param("south") BigDecimal south, @Param("west") BigDecimal west);
+
+    @Query(nativeQuery = true, value = """
+        SELECT * FROM location
+        WHERE ST_Contains(ST_LineFromText(CONCAT('LINESTRING(', :north, ' ', :east, ',', :south, ' ', :west, ')')), point)
+    """)
+    List<LocationEntity> findAllByPointh2(@Param("north") BigDecimal north, @Param("east") BigDecimal east, @Param("south") BigDecimal south, @Param("west") BigDecimal west);
 }

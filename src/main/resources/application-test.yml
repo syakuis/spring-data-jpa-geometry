@@ -2,6 +2,15 @@ spring:
   test:
     database:
       replace: none
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:syaku;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
   jpa:
+    database: h2
+    database-platform: org.hibernate.spatial.dialect.h2geodb.GeoDBDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
+    properties:
+      hibernate:
+        hbm2ddl:
+          import_files: schema.sql

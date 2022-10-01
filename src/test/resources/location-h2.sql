@@ -1,0 +1,3 @@
+insert into location (id, name, latitude, longitude, point) values (1, '파크원', 37.526667, 126.927141, ST_Point(37.526667, 126.927141));
+insert into location (id, name, latitude, longitude, point) values (2, 'IFC', 37.525243, 126.925694, ST_Point(37.525243, 126.925694));
+insert into location (id, name, latitude, longitude, point) values (3, '롯데타워', 37.512603, 127.102228, ST_Point(37.512603, 127.102228));
