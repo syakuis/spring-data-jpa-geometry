@@ -1,18 +1,15 @@
 package io.github.syakuis.domain;
 
+import io.github.syakuis.space.Coordinate;
 import io.github.syakuis.space.Direction;
 import io.github.syakuis.space.GeometryUtils;
-import io.github.syakuis.space.Coordinate;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.io.WKTReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,23 +23,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Sql("classpath:/location.sql")
 class LocationRepositoryTest {
     @Autowired
-    private EntityManager entityManager;
-
-    @Autowired
     private LocationRepository locationRepository;
+
     @Test
-    void save() throws Exception {
-        Double latitude = 32.321321;
-        Double longitude = 127.321321;
+    void save() {
+        BigDecimal latitude = new BigDecimal("32.321321");
+        BigDecimal longitude = new BigDecimal("127.321321");
 
         locationRepository.save(LocationEntity.builder()
             .name("테스트")
-            .point((Point) new WKTReader().read(String.format("POINT(%s %s)", longitude, latitude)))
+            .longitude(longitude)
+            .latitude(latitude)
             .build());
     }
 
     @Test
-    void distance() {
+    void around() {
         final Double meLatitude = 37.513982;
         final Double meLongitude = 127.101581;
         final Double distance = 2D;
@@ -50,23 +46,14 @@ class LocationRepositoryTest {
         Coordinate northEast = GeometryUtils.calculate(meLatitude, meLongitude, distance, Direction.NORTHEAST.getBearing());
         Coordinate southWest = GeometryUtils.calculate(meLatitude, meLongitude, distance, Direction.SOUTHWEST.getBearing());
 
-        double x1 = northEast.getLatitude();
-        double y1 = northEast.getLongitude();
-        double x2 = southWest.getLatitude();
-        double y2 = southWest.getLongitude();
+        double north = northEast.getLatitude();
+        double east = northEast.getLongitude();
+        double south = southWest.getLatitude();
+        double west = southWest.getLongitude();
 
-        String pointFormat = String.format("'LINESTRING(%f %f, %f %f)')", x1, y1, x2, y2);
-
-        Query query = entityManager.createNativeQuery("SELECT * "
-                + "FROM location AS r "
-                + "WHERE MBRContains(ST_LINESTRINGFROMTEXT(" + pointFormat + ", r.point)", LocationEntity.class)
-            .setMaxResults(10);
-
-        List<LocationEntity> location = query.getResultList();
-
+        List<LocationEntity> location = locationRepository.findAllByPoint(
+            BigDecimal.valueOf(north), BigDecimal.valueOf(east), BigDecimal.valueOf(south), BigDecimal.valueOf(west));
         assertTrue(location.stream().map(LocationEntity::getName).toList().contains("롯데타워"));
-
-        log.debug("{}", location);
     }
 
     @Test
@@ -78,17 +65,8 @@ class LocationRepositoryTest {
         double south = 37.526181;
         double west = 126.927087;
 
-        String pointFormat = String.format("'LINESTRING(%f %f, %f %f)')", north, east, south, west);
-
-        Query query = entityManager.createNativeQuery("SELECT * "
-                + "FROM location AS r "
-                + "WHERE MBRContains(ST_LINESTRINGFROMTEXT(" + pointFormat + ", r.point)", LocationEntity.class)
-            .setMaxResults(10);
-
-        List<LocationEntity> location = query.getResultList();
-
-        log.debug("{}", location);
-
+        List<LocationEntity> location = locationRepository.findAllByPoint(
+            BigDecimal.valueOf(north), BigDecimal.valueOf(east), BigDecimal.valueOf(south), BigDecimal.valueOf(west));
         assertTrue(location.stream().map(LocationEntity::getName).toList().contains("파크원"));
     }
 }

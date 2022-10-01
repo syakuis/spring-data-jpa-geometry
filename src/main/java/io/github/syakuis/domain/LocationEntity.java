@@ -1,9 +1,13 @@
 package io.github.syakuis.domain;
 
 import lombok.*;
-import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @author Seok Kyun. Choi.
@@ -16,7 +20,7 @@ import javax.persistence.*;
 @Table(name = "location",
     indexes = @Index(name = "IDX_location_point", columnList = "point")
 )
-public class LocationEntity {
+public class LocationEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,12 +28,24 @@ public class LocationEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false, precision = 30, scale = 14)
+    private BigDecimal latitude;
+
+    @Column(nullable = false, precision = 31, scale = 14)
+    private BigDecimal longitude;
+
     @Column(nullable = false)
-    private Point point;
+    private Geometry point;
 
     @Builder
-    public LocationEntity(String name, Point point) {
+    public LocationEntity(String name, BigDecimal latitude, BigDecimal longitude) {
         this.name = name;
-        this.point = point;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        try {
+            this.point = new WKTReader().read("POINT(" + longitude + " " + latitude + ")");
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("위도와 경도의 매개변수가 문제가 있습니다.");
+        }
     }
 }
