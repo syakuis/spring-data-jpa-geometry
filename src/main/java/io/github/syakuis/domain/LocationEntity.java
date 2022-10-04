@@ -38,10 +38,10 @@ public class LocationEntity implements Serializable {
     private Geometry point;
 
     @Builder
-    public LocationEntity(String name, BigDecimal latitude, BigDecimal longitude) {
+    public LocationEntity(String name, double latitude, double longitude) {
         this.name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.latitude = BigDecimal.valueOf(latitude);
+        this.longitude = BigDecimal.valueOf(longitude);
         try {
             this.point = new WKTReader().read("POINT(" + longitude + " " + latitude + ")");
         } catch (ParseException e) {

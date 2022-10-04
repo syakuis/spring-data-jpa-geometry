@@ -127,6 +127,7 @@ dependencies {
     implementation "org.hibernate:hibernate-spatial:${hibernateVersion}"
     implementation "com.querydsl:querydsl-core:${querydslVersion}"
     implementation "com.querydsl:querydsl-jpa:${querydslVersion}"
+    implementation "com.querydsl:querydsl-sql-spatial:${querydslVersion}"
     annotationProcessor(
         "jakarta.persistence:jakarta.persistence-api",
         "jakarta.annotation:jakarta.annotation-api",

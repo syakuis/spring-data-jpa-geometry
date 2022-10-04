@@ -21,15 +21,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @Slf4j
 @DataJpaTest
-@Sql("classpath:/location.sql")
+@Sql("classpath:/location-data.sql")
 class LocationRepositoryTest {
     @Autowired
     private LocationRepository locationRepository;
 
     @Test
     void save() {
-        BigDecimal latitude = new BigDecimal("32.321321");
-        BigDecimal longitude = new BigDecimal("127.321321");
+        double latitude = 32.321321;
+        double longitude = 127.321321;
 
         locationRepository.save(LocationEntity.builder()
             .name("테스트")
