@@ -38,6 +38,7 @@ class LocationQueryDslTest {
         double westY = 126.926742;
 
         List<LocationEntity> location = locationQueryDsl.findAll(BigDecimal.valueOf(northX), BigDecimal.valueOf(eastY), BigDecimal.valueOf(southX), BigDecimal.valueOf(westY));
+        log.debug("{}", location);
         assertTrue(location.stream().map(LocationEntity::getName).toList().contains("파크원"));
         assertTrue(location.stream().map(LocationEntity::getName).toList().contains("뱅크샐러드"));
     }

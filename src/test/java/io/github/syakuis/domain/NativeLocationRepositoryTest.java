@@ -72,12 +72,19 @@ class NativeLocationRepositoryTest {
 
     @Test
     void rectangle() {
+//        // 북동
+//        double north = 37.526984;
+//        double east = 126.927212;
+//        // 남서
+//        double south = 37.526181;
+//        double west = 126.927087;
+
         // 북동
-        double north = 37.526984;
-        double east = 126.927212;
+        double north = 37.5276993;
+        double east = 126.927146;
         // 남서
-        double south = 37.526181;
-        double west = 126.927087;
+        double south = 37.526238;
+        double west = 126.927212;
 
         String pointFormat = String.format("'LINESTRING(%f %f, %f %f)')", north, east, south, west);
 

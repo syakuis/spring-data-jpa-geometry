@@ -33,14 +33,12 @@ public class LocationQueryDsl extends QuerydslRepositorySupport {
 
     public List<LocationEntity> findAll(BigDecimal northX, BigDecimal eastY, BigDecimal southX, BigDecimal westY) {
         try {
-            JPAQuery<LocationEntity> query = new JPAQuery();
-            entityManager.createNativeQuery()
-            return jpaQueryFactory..selectFrom(locationEntity)
+            return jpaQueryFactory.selectFrom(locationEntity)
                 .where(
                 JTSGeometryExpressions.asJTSGeometry(locationEntity.point)
                     .contains(
                         new WKTReader().read(String.format("LINESTRING(%s %s, %s %s)", northX, eastY, southX, westY))))
-                ;
+                .fetch();
         } catch (ParseException e) {
             throw new IllegalArgumentException();
         }
