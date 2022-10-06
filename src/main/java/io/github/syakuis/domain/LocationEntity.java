@@ -6,21 +6,20 @@ import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
  * @author Seok Kyun. Choi.
- * @since 2022-09-26
+ * @since 2022-10-06
  */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @ToString
 @Entity
 @Table(name = "location",
-    indexes = @Index(name = "IDX_location_point", columnList = "point")
+    indexes = @Index(name = "IDX_location_latitude_longitude_1", columnList = "latitude,longitude")
 )
-public class LocationEntity implements Serializable {
+public class LocationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

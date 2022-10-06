@@ -7,6 +7,8 @@ create table location (
                           primary key (id)
 ) engine=InnoDB
 
+CREATE SPATIAL INDEX IDX_location_point_1 ON location (point);
+
 -- SELECT r.*, ST_Distance_Sphere(r.point, ST_GeomFromText('POINT(37.513982 127.101581)')) as distance
 -- FROM test AS r
 -- WHERE ST_Distance_Sphere(r.point, ST_GeomFromText('POINT(37.513982 127.101581)')) <= 2000;
