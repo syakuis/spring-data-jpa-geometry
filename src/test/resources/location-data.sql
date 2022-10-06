@@ -1,3 +1,5 @@
+CREATE SPATIAL INDEX IF NOT EXISTS IDX_location_point_1 ON location (point);
+
 insert into location (id, name, latitude, longitude, point) values (1, '파크원', 37.526667, 126.927141, ST_GeomFromText('POINT 126.927141 37.526667'));
 insert into location (id, name, latitude, longitude, point) values (2, 'IFC', 37.525243, 126.925694, ST_GeomFromText('POINT 126.925694 37.525243'));
 insert into location (id, name, latitude, longitude, point) values (3, '롯데타워', 37.512603, 127.102228, ST_GeomFromText('POINT 127.102228 37.512603'));
